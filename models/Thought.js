@@ -1,0 +1,77 @@
+const { Schema, model, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
+
+const ReactionSchema = new Schema(
+  {
+    // set custom id to avoid confusion with parent comment _id
+    reactionId: {
+      // use Mongoose's ObjectId data type
+      type: Schema.Types.ObjectId,
+      // default value = new ObjectId
+      default: () => new Types.ObjectId(),
+    },
+
+    reactionBody: {
+      type: String,
+      required: 'You need to leave a reaction!',
+      maxlength: 280,
+    },
+
+    username: {
+      type: String,
+      required: true,
+    },
+
+    createdAt: {
+      type: Date,
+      // use the getter method to format the timestamp on query. Default is the current timestamp
+      default: Date.now,
+      get: (timestamp) => dateFormat(timestamp),
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+    },
+    id: false,
+  }
+);
+
+const ThoughtSchema = new Schema(
+  {
+    thoughtText: {
+      type: String,
+      required: 'You need to leave a thought!',
+      minlength: 1,
+      maxlength: 280,
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp) => dateFormat(timestamp),
+    },
+
+    username: {
+      type: String,
+      required: true,
+    },
+
+    // Array of nested documents created with the reactionSchema
+    reactions: [ReactionSchema],
+  },
+  {
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+    id: false,
+  }
+);
+
+ThoughtSchema.virtual('reactionCount').get(function () {
+  return this.reactions.length;
+});
+
+const Thought = model('Thought', ThoughtSchema);
+module.exports = Thought;
