@@ -26,17 +26,14 @@ const thoughtController = {
       })
       .select('-__v')
       .then((dbThoughtData) => {
-        // If no thought is found, send 404
         if (!dbThoughtData) {
-          return res
-            .status(404)
-            .json({ message: 'No thought found with this id!' });
+          return res.status(404).json({ message: 'No thought with this id!' });
         }
         res.json(dbThoughtData);
       })
       .catch((err) => {
         console.log(err);
-        res.status(400).json(err);
+        res.sendStatus(400);
       });
   },
 

@@ -1,4 +1,4 @@
-const dateSuffix = (date) => {
+const addDateSuffix = (date) => {
   let dateStr = date.toString();
   // 1st, 2nd, 3rd, 4th etc
 
@@ -39,22 +39,27 @@ module.exports = (
   const dateObj = new Date(timestamp);
   const formattedMonth = months[dateObj.getMonth()];
 
-  const day = dateSuffix ? dateSuffix(dateObj.getDate()) : dateObj.getDate();
+  const dayOfMonth = dateSuffix
+    ? addDateSuffix(dateObj.getDate())
+    : dateObj.getDate();
 
   const year = dateObj.getFullYear();
-
   let hour =
-    dateObj.getHours() > 12 ? dateObj.getHours() - 12 : dateObj.getHours();
+    dateObj.getHours() > 12
+      ? Math.floor(dateObj.getHours() - 12)
+      : dateObj.getHours();
 
+  // if hour is 0 (12:00am), change it to 12
   if (hour === 0) {
     hour = 12;
   }
 
-  const minute = dateObj.getMinutes() < 10 ? `0` : `${dateObj.getMinutes()}`;
+  const minutes = (dateObj.getMinutes() < 10 ? '0' : '') + dateObj.getMinutes();
 
-  const period = dateObj.getHours() >= 12 ? `pm` : `am`;
+  // set `am` or `pm`
+  const periodOfDay = dateObj.getHours() >= 12 ? 'pm' : 'am';
 
-  const formattedTimeStamp = `${formattedMonth} ${day}, ${year} at ${hour}:${minute} ${period}`;
+  const formattedTimeStamp = `${formattedMonth} ${dayOfMonth}, ${year} at ${hour}:${minutes} ${periodOfDay}`;
 
   return formattedTimeStamp;
 };
