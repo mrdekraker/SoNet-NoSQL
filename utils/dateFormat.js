@@ -1,4 +1,4 @@
-const formatDateSuffix = (date) => {
+const dateSuffix = (date) => {
   let dateStr = date.toString();
   // 1st, 2nd, 3rd, 4th etc
 
